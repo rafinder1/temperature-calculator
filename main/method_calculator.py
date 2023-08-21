@@ -1,6 +1,10 @@
 class MethodCalculator:
     @staticmethod
-    def finite_element_method():
+    def select_calculation_method(method):
+        return getattr(MethodCalculator, method.value)
+
+    @staticmethod
+    def finite_element_method(data_building_partition, heat_information, boundary_condition):
         print("Calling finite_element_method")
         return "FEM"
 
