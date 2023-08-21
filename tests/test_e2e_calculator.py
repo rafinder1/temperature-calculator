@@ -3,6 +3,7 @@ import unittest
 import pandas as pd
 
 from main.calculator import TempCalculator
+from main.config import MethodSelector
 from tools.file_helper import FileHelper
 
 
@@ -13,5 +14,8 @@ class MainTestCase(unittest.TestCase):
 
         heat_information = FileHelper.read_json("tests/heat_information.json")
 
-        data_frame = TempCalculator.calculate(data_building_partition, heat_information)
+        method = MethodSelector.finite_element_method
+
+        data_frame = TempCalculator.calculate(data_building_partition, heat_information, method)
+
         self.assertEqual(expected, data_frame)
