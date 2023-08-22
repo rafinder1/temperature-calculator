@@ -15,4 +15,4 @@ class TempCalculator:
 
         result = selected_method(data_building_partition, heat_information, boundary_condition)
 
-        return DataFrame
+        return result

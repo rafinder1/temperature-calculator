@@ -1,4 +1,4 @@
-from main.config import BoundaryConditionName
+from main.config import BoundaryConditionName, ConditionsInBuilding
 
 
 class BoundaryConditionDefiner:
@@ -9,14 +9,14 @@ class BoundaryConditionDefiner:
         outside_boundary_condition = cls.outside(heat_information)
 
         return {
-            "inside_boundary_condition": inside_boundary_condition,
-            "outside_boundary_condition": outside_boundary_condition
+            BoundaryConditionName.inside.value: inside_boundary_condition,
+            BoundaryConditionName.outside.value: outside_boundary_condition
         }
 
     @staticmethod
     def inside(heat_information):
-        inside_temperature = heat_information['main']['inside_temperature']
-        inside_heater_power = heat_information['main']['inside_heater_power']
+        inside_temperature = heat_information[ConditionsInBuilding.inside_temperature.value]
+        inside_heater_power = heat_information[ConditionsInBuilding.inside_heater_power.value]
 
         if inside_temperature is not None:
             bc = BoundaryConditionName.dirichlet.value
@@ -28,8 +28,8 @@ class BoundaryConditionDefiner:
 
     @staticmethod
     def outside(heat_information):
-        outside_temperature = heat_information['main']['outside_temperature']
-        outside_heater_power = heat_information['main']['outside_heater_power']
+        outside_temperature = heat_information[ConditionsInBuilding.outside_temperature.value]
+        outside_heater_power = heat_information[ConditionsInBuilding.outside_heater_power.value]
 
         if outside_temperature is not None:
             bc = BoundaryConditionName.dirichlet.value
