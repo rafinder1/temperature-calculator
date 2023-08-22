@@ -7,10 +7,21 @@ from calculator.config import BoundaryConditionName, ConditionsInBuilding, air_a
 class MethodCalculator:
     @staticmethod
     def select_calculation_method(method):
+        """
+        Calculation method is chosen based on user input from the method parameter. The available methods
+        currently include finite_element_method. In future versions, there are plans to expand this
+        with the thermal_resistance_method.
+
+        :param method: An input provided as a string that specifies the name of the method.
+        :return: The corresponding method based on the provided input.
+        """
         return getattr(MethodCalculator, method.value)
 
     @staticmethod
     def finite_element_method(data_building_partition, heat_information, boundary_condition):
+        """
+        The finite element method in the 1D dimension was used to calculate the heat
+        """
 
         data_building_partition_with_air_heater = MethodCalculator.add_air_and_metal_heater(boundary_condition,
                                                                                             data_building_partition)
@@ -85,6 +96,11 @@ class MethodCalculator:
 
     @staticmethod
     def add_air_and_metal_heater(boundary_condition, data_building_partition):
+        """
+        Within this method, information about air and a heater has been added
+        if Neumann boundary conditions have been selected.
+        """
+
         air_heater_dataframe = pd.DataFrame(air_and_heater_param)
 
         if boundary_condition[BoundaryConditionName.inside.value] == BoundaryConditionName.neumann.value:
