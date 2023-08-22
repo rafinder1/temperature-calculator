@@ -14,7 +14,6 @@ class MethodCalculator:
 
         data_building_partition_with_air_heater = MethodCalculator.add_air_and_metal_heater(boundary_condition,
                                                                                             data_building_partition)
-
         data_building_partition_with_temperatures = (
             MethodCalculator.create_equation_and_solve(boundary_condition,
                                                        heat_information,
@@ -60,14 +59,12 @@ class MethodCalculator:
         elif boundary_condition[BoundaryConditionName.outside.value] == BoundaryConditionName.dirichlet.value and \
                 boundary_condition[BoundaryConditionName.inside.value] == BoundaryConditionName.dirichlet.value:
             # dirichlet - dirichlet
+            temperatures_vector[-1] = indoor_condition
             forces_vector[1] += outdoor_condition * area * thermal_conductivity[0] / thickness_layer[0]
-            forces_vector[-1] += indoor_condition * area * thickness_layer[-1] / 2
-            forces_vector[-2] += indoor_condition * area * thickness_layer[-2] / 2
-            temperatures_vector[1:] = np.linalg.solve(A[1:, 1:], forces_vector[1:])
+            forces_vector[-2] += indoor_condition * area * thermal_conductivity[-1] / thickness_layer[-1]
+            temperatures_vector[1:-1] = np.linalg.solve(stiffness_matrix[1:-1, 1:-1], forces_vector[1:-1])
 
-            temperatures_vector = temperatures_vector[1:]
-
-            data_building_partition['temperatures'] = temperatures_vector
+            data_building_partition['temperatures'] = [round(temp, 2) for temp in temperatures_vector[1:]]
 
         else:
             print("Different Boundary Condition no calculate")
