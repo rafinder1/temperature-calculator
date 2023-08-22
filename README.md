@@ -9,3 +9,11 @@ Zainstaluj pakiet za pomocą `pip`:
 ```shell
 pip install -r requirements.txt
 ```
+
+Użyj pakietu w swoim kodzie:
+
+```python
+from calculator.calculator import TempCalculator
+
+TempCalculator.calculate()
+```
