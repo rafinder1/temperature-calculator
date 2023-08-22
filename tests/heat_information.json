@@ -1,8 +1,0 @@
-{
-  "main": {
-    "inside_temperature": null,
-    "outside_temperature": -20,
-    "inside_heater_power": 80,
-    "outside_heater_power": null
-  }
-}
