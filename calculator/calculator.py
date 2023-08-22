@@ -1,7 +1,7 @@
 from pandas import DataFrame
-from main.config import MethodName
-from main.method_calculator import MethodCalculator
-from main.boundary_condition_definer import BoundaryConditionDefiner
+from calculator.config import MethodName
+from calculator.method_calculator import MethodCalculator
+from calculator.boundary_condition_definer import BoundaryConditionDefiner
 
 
 class TempCalculator:

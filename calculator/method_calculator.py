@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from main.config import BoundaryConditionName, ConditionsInBuilding, air_and_heater_param
+from calculator.config import BoundaryConditionName, ConditionsInBuilding, air_and_heater_param
 
 
 class MethodCalculator:

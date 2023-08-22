@@ -1,4 +1,4 @@
-from main.config import BoundaryConditionName, ConditionsInBuilding
+from calculator.config import BoundaryConditionName, ConditionsInBuilding
 
 
 class BoundaryConditionDefiner:

@@ -2,8 +2,8 @@ import unittest
 
 import pandas as pd
 
-from main.calculator import TempCalculator
-from main.config import MethodName
+from calculator.calculator import TempCalculator
+from calculator.config import MethodName
 from tools.file_helper import FileHelper
 
 
