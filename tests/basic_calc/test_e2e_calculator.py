@@ -1,17 +1,15 @@
 import unittest
 
-import pandas as pd
-
-from calculator.calculator import TempCalculator
-from calculator.config import MethodName
+from calculator.basic.calculator import TempCalculator
+from calculator.basic.config import MethodName
 from tools.file_helper import FileHelper
 
 
 class MainTestCase(unittest.TestCase):
     def test_temperature_calculator_dirichlet_neumann(self):
-        data_building_partition = FileHelper.read_csv("tests/building_partition.txt")
+        data_building_partition = FileHelper.read_csv("tests/basic_calc/building_partition.txt")
 
-        heat_information = FileHelper.read_json("tests/heat_information_dirichlet_neumann.json")
+        heat_information = FileHelper.read_json("tests/basic_calc/heat_information_dirichlet_neumann.json")
 
         method = MethodName.finite_element_method
 
@@ -23,9 +21,9 @@ class MainTestCase(unittest.TestCase):
         self.assertTrue(expected.equals(output))
 
     def test_temperature_calculator_dirichlet_dirichlet(self):
-        data_building_partition = FileHelper.read_csv("tests/building_partition.txt")
+        data_building_partition = FileHelper.read_csv("tests/basic_calc/building_partition.txt")
 
-        heat_information = FileHelper.read_json("tests/heat_information_dirichlet_dirichlet.json")
+        heat_information = FileHelper.read_json("tests/basic_calc/heat_information_dirichlet_dirichlet.json")
 
         method = MethodName.finite_element_method
 

@@ -13,7 +13,7 @@ pip install -r requirements.txt
 Użyj pakietu w swoim kodzie:
 
 ```python
-from calculator.calculator import TempCalculator
+from calculator.basic.calculator import TempCalculator
 
 TempCalculator.calculate()
 ```
