@@ -10,9 +10,13 @@ class MultiVariantsCalculator:
     def change_polystyrene(data_building_partition: DataFrame, heat_information: dict, polystyrene_data: DataFrame,
                            method: MethodName) -> DataFrame:
         try:
-            if len(data_building_partition) == 1 and data_building_partition['type_layer'].isin(['ocieplenie']).any():
-                raise ValueError("Define only polystyrene - multivariate analysis cannot be performed")
-            index_polystyrene = data_building_partition[data_building_partition['type_layer'] == 'ocieplenie'].index
+            if len(data_building_partition) == 1:
+                if data_building_partition['type_layer'].isin(['ocieplenie']).any():
+                    raise ValueError("Define only polystyrene - multivariate analysis cannot be performed")
+                else:
+                    index_polystyrene = len(data_building_partition) + 1
+            else:
+                index_polystyrene = data_building_partition[data_building_partition['type_layer'] == 'ocieplenie'].index
 
             for number_row, polystyrene_param in polystyrene_data.iterrows():
                 data_building_partition.loc[index_polystyrene, 'name_layer'] = polystyrene_param['name_layer']
@@ -20,7 +24,8 @@ class MultiVariantsCalculator:
                 data_building_partition.loc[index_polystyrene, 'thermal_conductivity'] = polystyrene_param[
                     'thermal_conductivity']
 
-                heat_transfer_coefficient = MultiVariantsCalculator.calc_heat_transfer_coefficient(data_building_partition)
+                heat_transfer_coefficient = MultiVariantsCalculator.calc_heat_transfer_coefficient(
+                    data_building_partition)
 
                 temperatures_all_layers = TempCalculator.calculate(data_building_partition, heat_information, method)
 
@@ -35,7 +40,6 @@ class MultiVariantsCalculator:
         except ValueError as e:
             print(e)
             return data_building_partition
-
         return polystyrene_data
 
     @staticmethod
