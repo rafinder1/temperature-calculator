@@ -29,7 +29,7 @@ class BoundaryConditionDefiner(Enum):
         to precisely determine how thermal energy passes through the building partition based on the provided data.
 
         :param heat_information: A dictionary containing information about temperature and/or heat transfer.
-        :return: A dictionary with keys BoundaryConditionName.inside and BoundaryConditionName.outside.
+        :return: A dictionary with keys BoundaryConditionDefiner.InsideBC and BoundaryConditionDefiner.OutsideBC.
         """
         logging.info(f"Determining the conditions in the partition based on data: {heat_information}")
 
