@@ -1,21 +1,21 @@
 import numpy as np
 import pandas as pd
-
+from enum import Enum
 from calculator.basic.config import BoundaryConditionName, ConditionsInBuilding, air_and_heater_param
 
 
-class MethodCalculator:
-    @staticmethod
-    def select_calculation_method(method):
-        """
-        Calculation method is chosen based on user input from the method parameter. The available methods
-        currently include finite_element_method. In future versions, there are plans to expand this
-        with the thermal_resistance_method.
+class MethodCalculator(Enum):
+    FINITE_ELEMENT_METHOD = 'finite_element_method'
+    THERMAL_RESISTANCE_METHOD = 'thermal_resistance_method'
 
-        :param method: An input provided as a string that specifies the name of the method.
-        :return: The corresponding method based on the provided input.
-        """
-        return getattr(MethodCalculator, method.value)
+    @classmethod
+    def calculate_by_method(cls, method: str, data_building_partition, heat_information, boundary_condition):
+        if method == cls.FINITE_ELEMENT_METHOD.value:
+            return cls.finite_element_method(data_building_partition, heat_information, boundary_condition)
+        elif method == cls.THERMAL_RESISTANCE_METHOD.value:
+            return cls.thermal_resistance_method()
+        else:
+            raise ValueError("This method does not exist")
 
     @staticmethod
     def finite_element_method(data_building_partition, heat_information, boundary_condition):

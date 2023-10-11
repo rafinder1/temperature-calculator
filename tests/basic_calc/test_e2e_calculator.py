@@ -1,7 +1,6 @@
 import unittest
 
 from calculator.basic.calculator import TempCalculator
-from calculator.basic.config import MethodName
 from tools.file_helper import FileHelper
 
 
@@ -11,7 +10,7 @@ class MainTestCase(unittest.TestCase):
 
         heat_information = FileHelper.read_json("tests/basic_calc/heat_information_dirichlet_neumann.json")
 
-        method = MethodName.finite_element_method
+        method = 'finite_element_method'
 
         output = TempCalculator.calculate(data_building_partition, heat_information, method)
 
@@ -25,7 +24,7 @@ class MainTestCase(unittest.TestCase):
 
         heat_information = FileHelper.read_json("tests/basic_calc/heat_information_dirichlet_dirichlet.json")
 
-        method = MethodName.finite_element_method
+        method = 'finite_element_method'
 
         output = TempCalculator.calculate(data_building_partition, heat_information, method)
 

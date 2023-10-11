@@ -7,7 +7,7 @@ from calculator.basic.boundary_condition_definer import BoundaryConditionDefiner
 class TempCalculator:
 
     @staticmethod
-    def calculate(data_building_partition: DataFrame, heat_information: dict, method: MethodName) -> DataFrame:
+    def calculate(data_building_partition: DataFrame, heat_information: dict, method: str) -> DataFrame:
         """
         The method computes the temperature distribution across each layer provided through inputs.
         Under the data_building_partition parameter, there's a DataFrame containing layer types, layer names,
@@ -25,8 +25,6 @@ class TempCalculator:
 
         boundary_condition = BoundaryConditionDefiner.define(heat_information=heat_information)
 
-        selected_method = MethodCalculator.select_calculation_method(method)
-
-        result = selected_method(data_building_partition, heat_information, boundary_condition)
+        result = MethodCalculator.calculate_by_method(method, data_building_partition, heat_information, boundary_condition)
 
         return result

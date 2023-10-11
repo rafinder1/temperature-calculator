@@ -16,7 +16,7 @@ class MainTestCase(unittest.TestCase):
         polystyrene_data = FileHelper.read_excel(file="tests/multivariants/warstwy_przegrody.xlsx",
                                                  sheet_name='polystyrene_cost')
 
-        method = MethodName.finite_element_method
+        method = 'finite_element_method'
 
         output = MultiVariantsCalculator.change_polystyrene(data_building_partition=data_building_partition,
                                                             heat_information=heat_information,
