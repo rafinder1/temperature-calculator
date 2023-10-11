@@ -5,10 +5,10 @@ from enum import Enum
 
 
 class BoundaryConditionDefiner(Enum):
-    Neumann = "neumann"
-    Dirichlet = "dirichlet"
-    InsideBC = "inside_boundary_condition"
-    OutsideBC = "outside_boundary_condition"
+    NEUMANN = "neumann"
+    DIRICHLET = "dirichlet"
+    INSIDE_BC = "inside_boundary_condition"
+    OUTSIDE_BC = "outside_boundary_condition"
 
     @classmethod
     def define(cls, heat_information: dict) -> dict:
@@ -40,16 +40,16 @@ class BoundaryConditionDefiner(Enum):
         logging.info(f"Outside exist condition: {outside_boundary_condition}")
 
         return {
-            cls.InsideBC.value: inside_boundary_condition,
-            cls.OutsideBC.value: outside_boundary_condition
+            cls.INSIDE_BC.value: inside_boundary_condition,
+            cls.OUTSIDE_BC.value: outside_boundary_condition
         }
 
     @classmethod
     def define_dirichlet_or_neumann(cls, temperature: float, heater_power: float) -> str:
         if temperature is not None:
-            return cls.Dirichlet.value
+            return cls.DIRICHLET.value
         elif heater_power is not None:
-            return cls.Neumann.value
+            return cls.NEUMANN.value
         else:
             raise ValueError("You need to define the temperature or power of the radiator")
 
