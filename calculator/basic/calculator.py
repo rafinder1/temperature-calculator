@@ -23,7 +23,7 @@ class TempCalculator:
         :return: The function returns all of this data expanded to include temperature distribution.
         """
 
-        boundary_condition = BoundaryConditionDefiner.define(heat_information)
+        boundary_condition = BoundaryConditionDefiner.define(heat_information=heat_information)
 
         selected_method = MethodCalculator.select_calculation_method(method)
 
