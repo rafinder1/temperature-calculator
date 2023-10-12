@@ -1,6 +1,10 @@
+import logging
+
 import numpy as np
 import pandas as pd
+from pandas import DataFrame
 from enum import Enum
+from calculator.basic.boundary_condition_definer import BoundaryConditionDefiner
 from calculator.basic.config import BoundaryConditionName, ConditionsInBuilding, air_and_heater_param
 
 
@@ -9,7 +13,8 @@ class MethodCalculator(Enum):
     THERMAL_RESISTANCE_METHOD = 'thermal_resistance_method'
 
     @classmethod
-    def calculate_by_method(cls, method: str, data_building_partition, heat_information, boundary_condition):
+    def calculate_by_method(cls, method: str, data_building_partition: DataFrame, heat_information: dict,
+                            boundary_condition: str) -> DataFrame:
         if method == cls.FINITE_ELEMENT_METHOD.value:
             return cls.finite_element_method(data_building_partition, heat_information, boundary_condition)
         elif method == cls.THERMAL_RESISTANCE_METHOD.value:
@@ -18,13 +23,15 @@ class MethodCalculator(Enum):
             raise ValueError("This method does not exist")
 
     @staticmethod
-    def finite_element_method(data_building_partition, heat_information, boundary_condition):
+    def finite_element_method(data_building_partition: DataFrame, heat_information: dict, boundary_condition: dict):
         """
         The finite element method in the 1D dimension was used to calculate the heat
         """
+        logging.info("Finite element calculations")
 
-        data_building_partition_with_air_heater = MethodCalculator.add_air_and_metal_heater(boundary_condition,
-                                                                                            data_building_partition)
+        data_building_partition_with_air_heater = (MethodCalculator
+                                                   .add_air_and_metal_heater(boundary_condition=boundary_condition,
+                                                                             data_building_partition=data_building_partition))
         data_building_partition_with_temperatures = (
             MethodCalculator.create_equation_and_solve(boundary_condition,
                                                        heat_information,
@@ -32,12 +39,13 @@ class MethodCalculator(Enum):
 
         return data_building_partition_with_temperatures
 
+
     @staticmethod
     def create_equation_and_solve(boundary_condition, heat_information, data_building_partition):
         thickness_layer = data_building_partition.thickness.to_list()
         thermal_conductivity = data_building_partition.thermal_conductivity.to_list()
 
-        size = len(thermal_conductivity) + 1
+        size = len(data_building_partition) + 1
         stiffness_matrix = np.full((size, size), 0, dtype="float64")
         forces_vector = np.full(size, 0, dtype="float64")
         temperatures_vector = np.full(size, 0, dtype="float64")
@@ -95,26 +103,26 @@ class MethodCalculator(Enum):
         return indoor_condition, outdoor_condition
 
     @staticmethod
-    def add_air_and_metal_heater(boundary_condition, data_building_partition):
+    def add_air_and_metal_heater(boundary_condition: dict, data_building_partition: DataFrame) -> DataFrame:
         """
         Within this method, information about air and a heater has been added
         if Neumann boundary conditions have been selected.
         """
 
         air_heater_dataframe = pd.DataFrame(air_and_heater_param)
+        if boundary_condition[BoundaryConditionDefiner.INSIDE_BC.value] == BoundaryConditionDefiner.NEUMANN.value:
+            logging.info(f"Adding a layer of air and a metal radiator to the data: {air_and_heater_param}")
 
-        if boundary_condition[BoundaryConditionName.inside.value] == BoundaryConditionName.neumann.value:
             data_building_partition = pd.concat([data_building_partition, air_heater_dataframe], ignore_index=True)
-
-        elif boundary_condition[BoundaryConditionName.outside.value] == BoundaryConditionName.neumann.value:
-            data_building_partition = pd.concat([air_heater_dataframe, data_building_partition], ignore_index=True)
+            data_building_partition.reset_index(inplace=True, drop=True)
+            return data_building_partition
+        elif boundary_condition[BoundaryConditionDefiner.OUTSIDE_BC.value] == BoundaryConditionDefiner.NEUMANN.value:
+            raise ValueError("The radiator should only be defined in the center of the room")
         else:
-            pass
-
-        data_building_partition.reset_index(inplace=True, drop=True)
-
-        return data_building_partition
+            return data_building_partition
 
     @staticmethod
-    def thermal_resistance_method():
+    def thermal_resistance_method() -> DataFrame:
         print("Calling thermal_resistance_method")
+        logging.info("Thermal resistance calculations")
+        return DataFrame

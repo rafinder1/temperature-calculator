@@ -25,6 +25,8 @@ class TempCalculator:
 
         boundary_condition = BoundaryConditionDefiner.define(heat_information=heat_information)
 
-        result = MethodCalculator.calculate_by_method(method, data_building_partition, heat_information, boundary_condition)
+        result = MethodCalculator.calculate_by_method(method=method, data_building_partition=data_building_partition,
+                                                      heat_information=heat_information,
+                                                      boundary_condition=boundary_condition)
 
         return result
