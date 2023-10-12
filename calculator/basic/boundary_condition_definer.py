@@ -1,7 +1,7 @@
 import logging
+from enum import Enum
 
 from calculator.basic.config import ConditionsInBuilding
-from enum import Enum
 
 
 class BoundaryConditionDefiner(Enum):
@@ -55,14 +55,14 @@ class BoundaryConditionDefiner(Enum):
 
     @classmethod
     def inside(cls, heat_information: dict) -> str:
-        inside_temperature = heat_information[ConditionsInBuilding.inside_temperature.value]
-        inside_heater_power = heat_information[ConditionsInBuilding.inside_heater_power.value]
+        inside_temperature = heat_information[ConditionsInBuilding.INSIDE_TEMPERATURE.value]
+        inside_heater_power = heat_information[ConditionsInBuilding.INSIDE_HEATER_POWER.value]
 
         return cls.define_dirichlet_or_neumann(temperature=inside_temperature, heater_power=inside_heater_power)
 
     @classmethod
     def outside(cls, heat_information: dict) -> str:
-        outside_temperature = heat_information[ConditionsInBuilding.outside_temperature.value]
+        outside_temperature = heat_information[ConditionsInBuilding.OUTSIDE_TEMPERATURE.value]
         outside_heater_power = heat_information[ConditionsInBuilding.outside_heater_power.value]
 
         return cls.define_dirichlet_or_neumann(temperature=outside_temperature, heater_power=outside_heater_power)

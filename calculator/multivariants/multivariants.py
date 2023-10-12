@@ -4,9 +4,8 @@ import sys
 from pandas import DataFrame
 
 from calculator.basic.calculator import TempCalculator
-from calculator.basic.config import MethodName
-from calculator.multivariants.config import Rsi, Rse
 from calculator.config import GLOBAL_LOGGING_LEVEL
+from calculator.multivariants.config import Rsi, Rse
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOGGING_LEVEL)
 
@@ -14,7 +13,7 @@ logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOGGING_LEVEL)
 class MultiVariantsCalculator:
     @staticmethod
     def change_polystyrene(data_building_partition: DataFrame, heat_information: dict, polystyrene_data: DataFrame,
-                           method: MethodName) -> DataFrame:
+                           method: str) -> DataFrame:
         try:
             logging.info(f'Multi-variant analysis for a given building partition: {data_building_partition}.'
                          f'For the conditions around it: {heat_information}')

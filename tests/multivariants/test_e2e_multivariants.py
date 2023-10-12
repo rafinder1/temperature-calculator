@@ -1,7 +1,8 @@
 import unittest
+
 from pandas.testing import assert_frame_equal
+
 from calculator.multivariants.multivariants import MultiVariantsCalculator
-from calculator.basic.config import MethodName
 from tools.file_helper import FileHelper
 
 
