@@ -2,7 +2,7 @@
 
 Aby uruchomić testy, wykonaj komendę:
 ```shell
-python -m unittest discover tests -v
+ python -m pytest -v --log-cli-level=INFO --log-cli-format="%(asctime)s [%(levelname)-8s] %(name)s: %(message)s" 
 ```
 
 Zainstaluj pakiet za pomocą `pip`:
