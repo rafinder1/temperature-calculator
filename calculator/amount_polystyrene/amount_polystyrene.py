@@ -34,12 +34,15 @@ class AmountPolystyreneAndPrice:
     def calculate_price_polystyrene(cls, amount_polystyrene_in_one_package: float, package: int,
                                     price_polystyrene_per_square_meter: float) -> float:
         logging.info("Calculate Price Polystyrene")
-        if price_polystyrene_per_square_meter <= 0:
-            raise ValueError("the price per square meter must be  more than zero")
-        amount_polystyrene_to_buy = cls.calculate_amount_polystyrene_to_buy(
-            amount_polystyrene_in_one_package=amount_polystyrene_in_one_package,
-            package=package)
-        return round(amount_polystyrene_to_buy * price_polystyrene_per_square_meter, 2)
+        try:
+            if price_polystyrene_per_square_meter <= 0:
+                raise ValueError("the price per square meter must be  more than zero")
+            amount_polystyrene_to_buy = cls.calculate_amount_polystyrene_to_buy(
+                amount_polystyrene_in_one_package=amount_polystyrene_in_one_package,
+                package=package)
+            return round(amount_polystyrene_to_buy * price_polystyrene_per_square_meter, 2)
+        except ValueError as e:
+            print(f"An error occurred: {e}")
 
     @classmethod
     def calculate_amount_polystyrene_to_buy(cls, amount_polystyrene_in_one_package: float, package: int) -> float:
@@ -58,11 +61,15 @@ class AmountPolystyreneAndPrice:
                                               wall_surface: float) -> int:
         logging.info("Calculate Amount Package")
 
-        if amount_polystyrene_in_one_package <= 0:
-            raise ValueError("The amount of Polystyrene in the package must be more than zero")
-        if wall_surface <= 0:
-            raise ValueError("Wall surface must be more than zero")
-        package = cls.calculate_amount_package(amount_package=amount_polystyrene_in_one_package,
-                                               wall_surface=wall_surface)
+        try:
+            if amount_polystyrene_in_one_package <= 0:
+                raise ValueError("The amount of Polystyrene in the package must be more than zero")
+            if wall_surface <= 0:
+                raise ValueError("Wall surface must be more than zero")
+            package = cls.calculate_amount_package(amount_package=amount_polystyrene_in_one_package,
+                                                   wall_surface=wall_surface)
+            return cls.round_up(param=package)
 
-        return cls.round_up(param=package)
+        except ValueError as e:
+            print(f"An error occurred: {e}")
+
