@@ -36,7 +36,15 @@ class AmountPolystyreneAndPrice:
         logging.info("Calculate Price Polystyrene")
         try:
             if price_polystyrene_per_square_meter <= 0:
-                raise ValueError("the price per square meter must be  more than zero")
+                logging.warning("The price per square meter must be more than zero")
+                raise ValueError("The price per square meter is <= 0")
+            elif amount_polystyrene_in_one_package <= 0:
+                logging.warning("The amount of Polystyrene in the package must be more than zero")
+                raise ValueError("The amount of Polystyrene is <= 0")
+            elif package <= 0:
+                logging.warning("The amount package must be more than zero")
+                raise ValueError("The amount package is <= 0")
+
             amount_polystyrene_to_buy = cls.calculate_amount_polystyrene_to_buy(
                 amount_polystyrene_in_one_package=amount_polystyrene_in_one_package,
                 package=package)
@@ -63,9 +71,11 @@ class AmountPolystyreneAndPrice:
 
         try:
             if amount_polystyrene_in_one_package <= 0:
-                raise ValueError("The amount of Polystyrene in the package must be more than zero")
-            if wall_surface <= 0:
-                raise ValueError("Wall surface must be more than zero")
+                logging.warning("The amount of Polystyrene in the package must be more than zero")
+                raise ValueError("The amount of Polystyrene is <= 0")
+            elif wall_surface <= 0:
+                logging.warning("Wall surface must be more than zero")
+                raise ValueError("Wall surface is <= 0")
             package = cls.calculate_amount_package(amount_package=amount_polystyrene_in_one_package,
                                                    wall_surface=wall_surface)
             return cls.round_up(param=package)
