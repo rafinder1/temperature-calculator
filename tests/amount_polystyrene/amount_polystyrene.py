@@ -12,7 +12,7 @@ class MainTestCase(unittest.TestCase):
         # given
         tested_data = AmountPolystyreneAndPrice.calculate(wall_surface=wall_surface,
                                                           price_square_meter=price_square_meter,
-                                                          amount_package=amount_package)
+                                                          amount_polystyrene_in_one_package=amount_package)
 
         # then
         expected = {'price_building': 3540.1, 'package': 36}
