@@ -26,17 +26,12 @@ class MultiVariantsCalculator:
                 index_polystyrene = data_building_partition[data_building_partition['type_layer'] == 'ocieplenie'].index
 
             if heat_information['outside_temperature'] is None or heat_information['outside_temperature'] == "":
-                default_outside_temperature = -20
-                logging.warning(
-                    f'Outside Temperature is not defined. Take the default value equal {default_outside_temperature}°C')
+                logging.warning('Outside Temperature is not defined.')
+                raise ValueError("Outside Temperature is None")
 
-                heat_information['outside_temperature'] = default_outside_temperature
             if heat_information['inside_heater_power'] is None or heat_information['inside_heater_power'] == "":
-                default_inside_heater_power = 80
-                logging.warning(
-                    f'Inside Heater Power is not defined. Take the default value equal {default_inside_heater_power} W/m2')
-
-                heat_information['inside_heater_power'] = default_inside_heater_power
+                logging.warning('Inside Heater Power is not defined.')
+                raise ValueError("Inside Heater Power is None")
 
             for number_row, polystyrene_param in polystyrene_data.iterrows():
                 data_building_partition.loc[index_polystyrene, 'name_layer'] = polystyrene_param['name_layer']

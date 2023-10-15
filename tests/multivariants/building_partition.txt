@@ -1,5 +1,0 @@
-type_layer,name_layer,thickness,thermal_conductivity,cost
-tynk,"Tynk gipsowy",0.02,0.4,32.81
-mur,"Beton Komórkowy",0.24,0.16,121.43
-ocieplenie,"Płyta styropianowa EPS 80-042 FASADA λ 0.042",0.15,0.042,33.95
-tynk,"Tynk silikatowy CERESIT CT74 1.5mm",0.015,0.8,30
