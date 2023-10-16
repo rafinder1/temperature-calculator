@@ -1,8 +1,8 @@
 from tests.multivariants.polystyrene_data import polystyrene_data
 import copy
 temperatures = [17.31, 19.22]
-comments = ['U>0.2', None]
+U_is_above_0_2 = [True, False]
 
 expected = copy.deepcopy(polystyrene_data)
 expected['temperatures'] = temperatures
-expected['comments'] = comments
+expected["U_is_above_0_2"] = U_is_above_0_2

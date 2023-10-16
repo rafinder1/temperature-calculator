@@ -20,8 +20,9 @@ class MultiVariantsCalculator:
         try:
             logging.info('START CALCULATION: Multi-variant analysis')
             logging.info(
-                f'Multi-variant analysis for a given building partition: {data_building_partition}.'
-                f'For the conditions around it: {outside_inside_thermal_data}')
+                "Multi-variant analysis for a given building partition: %s\n"
+                "For the conditions around it: %s m2",
+                data_building_partition, outside_inside_thermal_data)
 
             DataValidator.validate_mvc_data(data_building_partition=data_building_partition,
                                             outside_inside_thermal_data=outside_inside_thermal_data,
@@ -38,8 +39,9 @@ class MultiVariantsCalculator:
                 polystyrene_data.loc[number_row, 'temperatures'] = temperature_last_layer
 
                 polystyrene_data.loc[
-                    number_row, 'comments'] = cls.validate_heat_transfer_coefficient(
+                    number_row, "U_is_above_0_2"] = cls.validate_heat_transfer_coefficient(
                     data_bp=update_data_bp)
+                polystyrene_data["U_is_above_0_2"] = polystyrene_data["U_is_above_0_2"].astype(bool)
             logging.info('FINISH CALCULATION: Multi-variant analysis')
         except ValueError:
             pass
@@ -57,16 +59,15 @@ class MultiVariantsCalculator:
         return temperature_last_layer
 
     @classmethod
-    def validate_heat_transfer_coefficient(cls, data_bp: DataFrame) -> str:
+    def validate_heat_transfer_coefficient(cls, data_bp: DataFrame) -> bool:
         heat_transfer_coefficient = cls.calc_heat_transfer_coefficient(
             data_bp)
 
-        return cls.check_heat_transfer_coefficient(heat_transfer_coefficient)
+        return cls.is_heat_transfer_coefficient_above_maximum(heat_transfer_coefficient)
 
     @classmethod
-    def check_heat_transfer_coefficient(cls, heat_transfer_coefficient: float) -> str:
-        if heat_transfer_coefficient > 0.2:
-            return 'U>0.2'
+    def is_heat_transfer_coefficient_above_maximum(cls, heat_transfer_coefficient: float) -> bool:
+        return heat_transfer_coefficient > 0.2
 
     @classmethod
     def update_polystyrene_data(cls, data: DataFrame, parameters: Series) -> DataFrame:
