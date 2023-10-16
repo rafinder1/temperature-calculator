@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame
 
-from calculator.basic.config import ConditionsInBuilding, air_and_heater_param, area
+from calculator.basic.config import air_and_heater_param, area
 from calculator.shared_data.boundary_condition_definer import BoundaryConditionDefiner
 from calculator.shared_data.outside_inside_thermal_data import OutsideInsideThermalData
 
@@ -13,6 +13,15 @@ from calculator.shared_data.outside_inside_thermal_data import OutsideInsideTher
 class MethodCalculator(Enum):
     FINITE_ELEMENT_METHOD = 'finite_element_method'
     THERMAL_RESISTANCE_METHOD = 'thermal_resistance_method'
+
+    @classmethod
+    def get_all_method(cls):
+        return list(cls)
+
+    @classmethod
+    def get_value_method(cls):
+        methods = cls.get_all_method()
+        return [method.value for method in methods]
 
     @classmethod
     def calculate_by_method(cls, method: str, data_building_partition: DataFrame,
