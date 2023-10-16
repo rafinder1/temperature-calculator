@@ -5,7 +5,7 @@ from pandas import DataFrame, Series
 from calculator.basic.calculator import TempCalculator
 from calculator.config import GLOBAL_LOGGING_LEVEL
 from calculator.multivariants.config import Rsi, Rse
-from calculator.shared_data.method_calculator import MethodCalculator
+from calculator.shared_data.data_validator import DataValidator
 from calculator.shared_data.outside_inside_thermal_data import OutsideInsideThermalData
 
 logging.basicConfig(level=GLOBAL_LOGGING_LEVEL)
@@ -23,9 +23,9 @@ class MultiVariantsCalculator:
                 f'Multi-variant analysis for a given building partition: {data_building_partition}.'
                 f'For the conditions around it: {outside_inside_thermal_data}')
 
-            cls.validate_data(data_building_partition=data_building_partition,
-                              outside_inside_thermal_data=outside_inside_thermal_data,
-                              polystyrene_data=polystyrene_data, method=method)
+            DataValidator.validate_mvc_data(data_building_partition=data_building_partition,
+                                            outside_inside_thermal_data=outside_inside_thermal_data,
+                                            polystyrene_data=polystyrene_data, method=method)
 
             for number_row, polystyrene_param in polystyrene_data.iterrows():
                 update_data_bp = cls.update_polystyrene_data(data=data_building_partition,
@@ -41,7 +41,7 @@ class MultiVariantsCalculator:
                     number_row, 'comments'] = cls.validate_heat_transfer_coefficient(
                     data_bp=update_data_bp)
             logging.info('FINISH CALCULATION: Multi-variant analysis')
-        except ValueError as error:
+        except ValueError:
             pass
         return polystyrene_data
 
@@ -78,45 +78,6 @@ class MultiVariantsCalculator:
 
         return data
 
-    @classmethod
-    def validate_data(cls, data_building_partition: DataFrame,
-                      outside_inside_thermal_data: OutsideInsideThermalData,
-                      polystyrene_data: DataFrame,
-                      method: str):
-
-        cls.validate_type_data(data=data_building_partition, data_type=DataFrame)
-        cls.validate_type_data(data=outside_inside_thermal_data, data_type=OutsideInsideThermalData)
-        cls.validate_type_data(data=polystyrene_data, data_type=DataFrame)
-        cls.validate_type_data(data=method, data_type=str)
-
-        cls.validate_name_method(method=method)
-        cls.validate_non_empty_data(data=polystyrene_data)
-
-        cls.validate_non_empty_data(data=data_building_partition)
-        cls.validate_contains_only_polystyrene(data_bp=data_building_partition)
-
-        cls.validate_outside_inside_thermal_data(
-            outside_inside_thermal_data=outside_inside_thermal_data)
-
-        logging.info("Provided data is OK")
-
-    @classmethod
-    def validate_name_method(cls, method: str):
-        value_method = MethodCalculator.get_value_method()
-        if method not in value_method:
-            raise NameError(f'Wrong name method: {method}. You can choose: {value_method}')
-
-    @classmethod
-    def validate_type_data(cls, data, data_type):
-        if type(data) is not data_type:
-            raise TypeError(f"Data has wrong type. {data_type} != {type(data)}")
-
-    @classmethod
-    def validate_outside_inside_thermal_data(cls,
-                                             outside_inside_thermal_data:
-                                             OutsideInsideThermalData) -> None:
-        outside_inside_thermal_data.validated_data_presence()
-
     @staticmethod
     def find_polystyrene_in_data(data_building_partition: DataFrame) -> int:
 
@@ -126,19 +87,6 @@ class MultiVariantsCalculator:
             index_polystyrene = data_building_partition[
                 data_building_partition['type_layer'] == 'ocieplenie'].index
         return index_polystyrene
-
-    @staticmethod
-    def validate_non_empty_data(data: DataFrame):
-        if len(data) == 0:
-            logging.error("Data has not been defined")
-            raise ValueError("Data has not been defined")
-
-    @staticmethod
-    def validate_contains_only_polystyrene(data_bp: DataFrame) -> bool:
-        if len(data_bp) == 1:
-            if data_bp['type_layer'].isin(['ocieplenie']).any():
-                raise ValueError(
-                    "Define only polystyrene - multivariate analysis cannot be performed")
 
     @staticmethod
     def calc_heat_transfer_coefficient(data_bp):
