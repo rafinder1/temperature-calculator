@@ -1,7 +1,7 @@
 from pandas import DataFrame
 
-from calculator.shared_data.method_calculator import MethodCalculator
 from calculator.shared_data.boundary_condition_definer import BoundaryConditionDefiner
+from calculator.shared_data.method_calculator import MethodCalculator
 from calculator.shared_data.outside_inside_thermal_data import OutsideInsideThermalData
 
 

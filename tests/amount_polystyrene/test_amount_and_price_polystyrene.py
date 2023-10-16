@@ -10,8 +10,10 @@ amount_package = [
 ]
 
 
-@pytest.mark.parametrize("amount_polystyrene_in_one_package, wall_surface, expected_amount_package", amount_package)
-def test_calculate_amount_package(amount_polystyrene_in_one_package, wall_surface, expected_amount_package):
+@pytest.mark.parametrize("amount_polystyrene_in_one_package, wall_surface, expected_amount_package",
+                         amount_package)
+def test_calculate_amount_package(amount_polystyrene_in_one_package, wall_surface,
+                                  expected_amount_package):
     package_rounded = AmountPolystyreneAndPrice.calculate_amount_package_and_round_up(
         amount_polystyrene_in_one_package=amount_polystyrene_in_one_package,
         wall_surface=wall_surface)

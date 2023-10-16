@@ -3,6 +3,7 @@ import sys
 from dataclasses import dataclass
 
 from calculator.config import GLOBAL_LOGGING_LEVEL
+
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOGGING_LEVEL)
 
 
