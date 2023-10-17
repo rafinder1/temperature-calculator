@@ -40,6 +40,10 @@ class DataValidator:
         cls.validate_type_data(data=price_square_meter, data_type=float)
         cls.validate_type_data(data=amount_polystyrene_in_one_package, data_type=float)
 
+        cls.validate_value_is_positive(value=wall_surface)
+        cls.validate_value_is_positive(value=price_square_meter)
+        cls.validate_value_is_positive(value=amount_polystyrene_in_one_package)
+
         logging.info("Provided data is OK")
 
     @staticmethod
@@ -47,6 +51,11 @@ class DataValidator:
         value_method = MethodCalculator.get_value_method()
         if method not in value_method:
             raise NameError(f'Wrong name method: {method}. You can choose: {value_method}')
+
+    @staticmethod
+    def validate_value_is_positive(value: float):
+        if value <= 0:
+            raise ValueError("Value must be greater than 0")
 
     @staticmethod
     def validate_type_data(data, data_type):
