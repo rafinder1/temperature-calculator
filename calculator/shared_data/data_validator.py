@@ -32,6 +32,16 @@ class DataValidator:
 
         logging.info("Provided data is OK")
 
+    @classmethod
+    def validate_data_in_ap(cls, wall_surface: float, price_square_meter: float,
+                            amount_polystyrene_in_one_package: float):
+
+        cls.validate_type_data(data=wall_surface, data_type=float)
+        cls.validate_type_data(data=price_square_meter, data_type=float)
+        cls.validate_type_data(data=amount_polystyrene_in_one_package, data_type=float)
+
+        logging.info("Provided data is OK")
+
     @staticmethod
     def validate_name_method(method: str):
         value_method = MethodCalculator.get_value_method()

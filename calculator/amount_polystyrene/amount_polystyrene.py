@@ -16,6 +16,7 @@ import math
 import sys
 
 from calculator.config import GLOBAL_LOGGING_LEVEL
+from calculator.shared_data.data_validator import DataValidator
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOGGING_LEVEL)
 
@@ -48,6 +49,11 @@ class AmountPolystyreneAndPrice:
                      "2. Price per square meter %s zł,\n"
                      "3. amount in one package %s m2.",
                      wall_surface, price_square_meter, amount_polystyrene_in_one_package)
+        DataValidator.validate_data_in_ap(
+            wall_surface=wall_surface,
+            price_square_meter=price_square_meter,
+            amount_polystyrene_in_one_package=amount_polystyrene_in_one_package)
+
         package_rounded = cls.calculate_amount_package_and_round_up(
             amount_polystyrene_in_one_package=amount_polystyrene_in_one_package,
             wall_surface=wall_surface)
