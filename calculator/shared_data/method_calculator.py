@@ -1,5 +1,6 @@
 import logging
 from enum import Enum
+
 import numpy as np
 import pandas as pd
 from numpy import ndarray
@@ -61,12 +62,12 @@ class MethodCalculator(Enum):
     def define_size_matrix(data: DataFrame):
         return len(data) + 1
 
-    @staticmethod
-    def define_stiffness_matrix(data_building_partition: DataFrame, size: float):
+    @classmethod
+    def define_stiffness_matrix(cls, data_building_partition: DataFrame, size: float):
 
-        stiffness_matrix = MethodCalculator.get_stiffness_matrix_with_zero(size)
+        stiffness_matrix = cls.get_stiffness_matrix_with_zero(size)
 
-        stiffness_matrix_with_data = MethodCalculator.add_data_to_stiffness_matrix(
+        stiffness_matrix_with_data = cls.add_data_to_stiffness_matrix(
             size=size, stiffness_matrix=stiffness_matrix,
             data_building_partition=data_building_partition)
 
@@ -89,32 +90,69 @@ class MethodCalculator(Enum):
     def get_stiffness_matrix_with_zero(size: int) -> ndarray:
         return np.full((size, size), 0, dtype="float64")
 
-    @staticmethod
-    def define_force_vector(data_building_partition: DataFrame, boundary_condition: dict,
+    @classmethod
+    def define_force_vector(cls, data_building_partition: DataFrame, boundary_condition: dict,
                             outside_inside_thermal_data: OutsideInsideThermalData,
                             size: float):
-        thickness_layer = data_building_partition.thickness.to_list()
-        thermal_conductivity = data_building_partition.thermal_conductivity.to_list()
 
-        forces_vector = np.full(size, 0, dtype="float64")
-        outdoor_condition = outside_inside_thermal_data.OUTSIDE_TEMPERATURE
+        forces_vector = cls.get_vector_with_zero(size=size)
+
+        forces_vector_with_data = cls.add_data_to_forces_vector(boundary_condition,
+                                                                data_building_partition,
+                                                                forces_vector,
+                                                                outside_inside_thermal_data)
+
+        return forces_vector_with_data
+
+    @classmethod
+    def add_data_to_forces_vector(cls, boundary_condition, data_building_partition, forces_vector,
+                                  outside_inside_thermal_data):
 
         if boundary_condition['inside_bc'] == BoundaryConditionDefiner.NEUMANN.value:
-            indoor_condition = outside_inside_thermal_data.INSIDE_HEATER_POWER
-
-            forces_vector[1] += outdoor_condition * area * thermal_conductivity[0] / \
-                                thickness_layer[0]
-            forces_vector[-1] += indoor_condition * area * thickness_layer[-1] / 2
-            forces_vector[-2] += indoor_condition * area * thickness_layer[-2] / 2
+            cls.update_fv_for_neumann_bc(forces_vector, data_building_partition,
+                                         outside_inside_thermal_data)
         elif boundary_condition["outside_bc"] == BoundaryConditionDefiner.DIRICHLET.value:
-            indoor_condition = outside_inside_thermal_data.INSIDE_TEMPERATURE
 
-            forces_vector[1] += outdoor_condition * area * thermal_conductivity[0] / \
-                                thickness_layer[0]
-            forces_vector[-2] += indoor_condition * area * thermal_conductivity[-1] / \
-                                 thickness_layer[-1]
+            cls.update_fv_for_dirichlet_bc(forces_vector, data_building_partition,
+                                           outside_inside_thermal_data)
 
         return forces_vector
+
+    @classmethod
+    def update_fv_for_dirichlet_bc(cls, forces_vector: ndarray, data_building_partition: DataFrame,
+                                   outside_inside_thermal_data: OutsideInsideThermalData, ):
+
+        outdoor_condition = outside_inside_thermal_data.OUTSIDE_TEMPERATURE
+        thermal_conductivity = data_building_partition.thermal_conductivity.to_list()
+        thickness_layer = data_building_partition.thickness.to_list()
+        indoor_condition = outside_inside_thermal_data.INSIDE_TEMPERATURE
+        forces_vector[1] += cls.update_fv_from_outdoor_condition(
+            outdoor_condition, thermal_conductivity, thickness_layer)
+        forces_vector[-2] += indoor_condition * area * thermal_conductivity[-1] / thickness_layer[
+            -1]
+
+    @classmethod
+    def update_fv_for_neumann_bc(cls, forces_vector: ndarray, data_building_partition: DataFrame,
+                                 outside_inside_thermal_data: OutsideInsideThermalData,
+                                 ):
+        outdoor_condition = outside_inside_thermal_data.OUTSIDE_TEMPERATURE
+        thermal_conductivity = data_building_partition.thermal_conductivity.to_list()
+        thickness_layer = data_building_partition.thickness.to_list()
+
+        indoor_condition = outside_inside_thermal_data.INSIDE_HEATER_POWER
+        forces_vector[1] += cls.update_fv_from_outdoor_condition(
+            outdoor_condition, thermal_conductivity, thickness_layer)
+        forces_vector[-1] += indoor_condition * area * thickness_layer[-1] / 2
+        forces_vector[-2] += indoor_condition * area * thickness_layer[-2] / 2
+
+    @staticmethod
+    def update_fv_from_outdoor_condition(outdoor_condition: float, thermal_conductivity: float,
+                                         thickness_layer: float) -> float:
+        return outdoor_condition * area * thermal_conductivity[0] / thickness_layer[0]
+
+    @staticmethod
+    def get_vector_with_zero(size: int) -> ndarray:
+        return np.full(size, 0, dtype="float64")
 
     @staticmethod
     def solve_equation(data_building_partition: DataFrame, boundary_condition: dict,
