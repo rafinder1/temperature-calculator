@@ -11,24 +11,26 @@ logging.basicConfig(level=GLOBAL_LOGGING_LEVEL)
 
 class DataValidator:
     @classmethod
-    def validate_mvc_data(cls, data_building_partition: DataFrame,
-                          outside_inside_thermal_data: OutsideInsideThermalData,
-                          polystyrene_data: DataFrame,
-                          method: str):
+    def validate_data_from_calculator(cls, data_building_partition: DataFrame,
+                                      outside_inside_thermal_data: OutsideInsideThermalData,
+                                      method: str,
+                                      polystyrene_data: DataFrame = None
+                                      ):
+
+        cls.validate_type_data(data=method, data_type=str)
+        cls.validate_name_method(method=method)
 
         cls.validate_type_data(data=data_building_partition, data_type=DataFrame)
-        cls.validate_type_data(data=outside_inside_thermal_data, data_type=OutsideInsideThermalData)
-        cls.validate_type_data(data=polystyrene_data, data_type=DataFrame)
-        cls.validate_type_data(data=method, data_type=str)
-
-        cls.validate_name_method(method=method)
-        cls.validate_non_empty_data(data=polystyrene_data)
-
         cls.validate_non_empty_data(data=data_building_partition)
         cls.validate_contains_only_polystyrene(data_bp=data_building_partition)
 
         cls.validate_outside_inside_thermal_data(
             outside_inside_thermal_data=outside_inside_thermal_data)
+        cls.validate_type_data(data=outside_inside_thermal_data, data_type=OutsideInsideThermalData)
+
+        if polystyrene_data is not None:
+            cls.validate_non_empty_data(data=polystyrene_data)
+            cls.validate_type_data(data=polystyrene_data, data_type=DataFrame)
 
         logging.info("Provided data is OK")
 

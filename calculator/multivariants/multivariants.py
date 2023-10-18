@@ -24,9 +24,9 @@ class MultiVariantsCalculator:
                 "For the conditions around it: %s m2",
                 data_building_partition, outside_inside_thermal_data)
 
-            DataValidator.validate_mvc_data(data_building_partition=data_building_partition,
-                                            outside_inside_thermal_data=outside_inside_thermal_data,
-                                            polystyrene_data=polystyrene_data, method=method)
+            DataValidator.validate_data_from_calculator(data_building_partition=data_building_partition,
+                                                        outside_inside_thermal_data=outside_inside_thermal_data,
+                                                        polystyrene_data=polystyrene_data, method=method)
 
             for number_row, polystyrene_param in polystyrene_data.iterrows():
                 update_data_bp = cls.update_polystyrene_data(data=data_building_partition,

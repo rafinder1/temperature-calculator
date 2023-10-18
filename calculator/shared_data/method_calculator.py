@@ -1,11 +1,11 @@
 import logging
 from enum import Enum
-
 import numpy as np
 import pandas as pd
+from numpy import ndarray
 from pandas import DataFrame
 
-from calculator.basic.config import air_and_heater_param, area
+from calculator.basic.config import air_heater_dataframe, area
 from calculator.shared_data.boundary_condition_definer import BoundaryConditionDefiner
 from calculator.shared_data.outside_inside_thermal_data import OutsideInsideThermalData
 
@@ -63,11 +63,20 @@ class MethodCalculator(Enum):
 
     @staticmethod
     def define_stiffness_matrix(data_building_partition: DataFrame, size: float):
+
+        stiffness_matrix = MethodCalculator.get_stiffness_matrix_with_zero(size)
+
+        stiffness_matrix_with_data = MethodCalculator.add_data_to_stiffness_matrix(
+            size=size, stiffness_matrix=stiffness_matrix,
+            data_building_partition=data_building_partition)
+
+        return stiffness_matrix_with_data
+
+    @staticmethod
+    def add_data_to_stiffness_matrix(size: int, stiffness_matrix: ndarray,
+                                     data_building_partition: DataFrame) -> ndarray:
         thickness_layer = data_building_partition.thickness.to_list()
         thermal_conductivity = data_building_partition.thermal_conductivity.to_list()
-
-        stiffness_matrix = np.full((size, size), 0, dtype="float64")
-
         for i in range(size - 1):
             stiffness_matrix[i, i] += (area * thermal_conductivity[i]) / thickness_layer[i]
             stiffness_matrix[i, i + 1] += -(area * thermal_conductivity[i]) / thickness_layer[i]
@@ -75,6 +84,10 @@ class MethodCalculator(Enum):
             stiffness_matrix[i + 1, i + 1] += (area * thermal_conductivity[i]) / thickness_layer[i]
 
         return stiffness_matrix
+
+    @staticmethod
+    def get_stiffness_matrix_with_zero(size: int) -> ndarray:
+        return np.full((size, size), 0, dtype="float64")
 
     @staticmethod
     def define_force_vector(data_building_partition: DataFrame, boundary_condition: dict,
@@ -86,16 +99,14 @@ class MethodCalculator(Enum):
         forces_vector = np.full(size, 0, dtype="float64")
         outdoor_condition = outside_inside_thermal_data.OUTSIDE_TEMPERATURE
 
-        if boundary_condition[
-            'inside_boundary_condition'] == BoundaryConditionDefiner.NEUMANN.value:
+        if boundary_condition['inside_bc'] == BoundaryConditionDefiner.NEUMANN.value:
             indoor_condition = outside_inside_thermal_data.INSIDE_HEATER_POWER
 
             forces_vector[1] += outdoor_condition * area * thermal_conductivity[0] / \
                                 thickness_layer[0]
             forces_vector[-1] += indoor_condition * area * thickness_layer[-1] / 2
             forces_vector[-2] += indoor_condition * area * thickness_layer[-2] / 2
-        elif boundary_condition[
-            "outside_boundary_condition"] == BoundaryConditionDefiner.DIRICHLET.value:
+        elif boundary_condition["outside_bc"] == BoundaryConditionDefiner.DIRICHLET.value:
             indoor_condition = outside_inside_thermal_data.INSIDE_TEMPERATURE
 
             forces_vector[1] += outdoor_condition * area * thermal_conductivity[0] / \
@@ -113,8 +124,7 @@ class MethodCalculator(Enum):
         temperatures_vector = np.full(size, 0, dtype="float64")
 
         temperatures_vector[0] = outside_inside_thermal_data.OUTSIDE_TEMPERATURE
-        if boundary_condition[
-            'inside_boundary_condition'] == BoundaryConditionDefiner.NEUMANN.value:
+        if boundary_condition['inside_bc'] == BoundaryConditionDefiner.NEUMANN.value:
             # neumann - dirichlet
             temperatures_vector[1:] = np.linalg.solve(stiffness_matrix[1:, 1:], forces_vector[1:])
             temperatures_vector = temperatures_vector[1:]
@@ -124,8 +134,7 @@ class MethodCalculator(Enum):
 
             data_building_partition = data_building_partition[:-2]
             return data_building_partition
-        elif boundary_condition[
-            "outside_boundary_condition"] == BoundaryConditionDefiner.DIRICHLET.value:
+        elif boundary_condition["outside_bc"] == BoundaryConditionDefiner.DIRICHLET.value:
             indoor_condition = outside_inside_thermal_data.INSIDE_TEMPERATURE
             # dirichlet - dirichlet
             temperatures_vector[-1] = indoor_condition
@@ -165,18 +174,15 @@ class MethodCalculator(Enum):
         if Neumann boundary conditions have been selected.
         """
 
-        air_heater_dataframe = pd.DataFrame(air_and_heater_param)
-        if boundary_condition[
-            "inside_boundary_condition"] == BoundaryConditionDefiner.NEUMANN.value:
+        if boundary_condition["inside_bc"] == BoundaryConditionDefiner.NEUMANN.value:
             logging.info(
-                f"Adding a layer of air and a metal radiator to the data: {air_and_heater_param}")
+                f"Adding a layer of air and a metal radiator to the data: {air_heater_dataframe}")
 
             data_building_partition = pd.concat([data_building_partition, air_heater_dataframe],
                                                 ignore_index=True)
             data_building_partition.reset_index(inplace=True, drop=True)
             return data_building_partition
-        elif boundary_condition[
-            "outside_boundary_condition"] == BoundaryConditionDefiner.NEUMANN.value:
+        elif boundary_condition["outside_bc"] == BoundaryConditionDefiner.NEUMANN.value:
             raise ValueError("The radiator should only be defined in the center of the room")
         else:
             return data_building_partition

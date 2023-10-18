@@ -52,8 +52,8 @@ class BoundaryConditionDefiner(Enum):
         logging.info(f"Outside exist condition: {outside_boundary_condition}")
 
         return {
-            'inside_boundary_condition': inside_boundary_condition,
-            'outside_boundary_condition': outside_boundary_condition
+            'inside_bc': inside_boundary_condition,
+            'outside_bc': outside_boundary_condition
         }
 
     @classmethod
