@@ -13,7 +13,7 @@ exclude = ["tests*"]
 
 [project]
 name = "temperature_calculator"
-version = "0.0.4.1"
+version = "0.0.4.2"
 authors = [{ name = "Rafał Protasiuk", email = "rafpro33@gmail.com" }]
 description = "to calculate the heat in the building envelope"
 readme = "README.md"
