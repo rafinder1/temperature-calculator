@@ -6,14 +6,11 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages]
-find = { }
-
-[tool.setuptools.packages.find]
-exclude = ["tests*"]
+find = { exclude = ["tests*"] }
 
 [project]
 name = "temperature_calculator"
-version = "0.0.4.2"
+version = "0.0.4.3"
 authors = [{ name = "Rafał Protasiuk", email = "rafpro33@gmail.com" }]
 description = "to calculate the heat in the building envelope"
 readme = "README.md"
