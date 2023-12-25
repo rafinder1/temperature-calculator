@@ -1,21 +1,39 @@
-### Temperature Calculator
+# Temperature Calculator
 
-Aby uruchomić testy, wykonaj komendę:
+The Temperature Calculator project has been developed as part of a master's thesis in sustainable construction at the Military University of Technology in Warsaw.
 
-```shell
- python -m pytest -v --log-cli-level=INFO --log-cli-format="%(asctime)s [%(levelname)-8s] %(name)s: %(message)s" 
-```
+## Project Description
 
-Zainstaluj pakiet za pomocą `pip`:
+The project primarily focuses on calculating temperatures within building partitions. Calculations are performed using finite element method equations in 1D with constant time.
 
-```shell
-pip install -r requirements.txt
-```
+### Core Features
 
-Użyj pakietu w swoim kodzie:
+1. **Temperature Calculation (basic_calc):**
+   - To use this module, utilize the class: `TempCalculator.calculate(data_building_partition, outside_inside_thermal_data, method)`
 
-```python
-from calculator.basic.calculator import TempCalculator
+2. **Polystyrene Selection (multivariants):**
+   - The package selects the optimal type and thickness of polystyrene based on the arrangement of wall layers.
+   - To use this module, use the class: `MultiVariantsCalculator.change_polystyrene(data_building_partition, outside_inside_thermal_data, polystyrene_data, method)`
 
-TempCalculator.calculate()
-```
+3. **Polystyrene Quantity Calculation (amount_polystyrene):**
+   - The package can calculate the amount of polystyrene needed for insulating a house/apartment.
+   - To use this module, use the class: `AmountPolystyreneAndPrice.calculate(wall_surface, price_square_meter, amount_package)`
+
+### GitHub Actions Integration
+
+The project includes Continuous Integration (CI) using GitHub Actions, where tests are conducted on Ubuntu and Windows platforms, supporting Python 3.8 and 3.9 environments.
+
+### PyPI Package
+
+The current version of the package is a Work in Progress (WIP) and is not yet available on [PyPI](https://pypi.org/).
+
+## Additional Information
+
+- **Package Dockerization:** (Work in Progress)
+
+## Versions
+
+- **Version 0.0.4.3**
+
+
+
