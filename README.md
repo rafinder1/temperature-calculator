@@ -1,5 +1,7 @@
 # Temperature Calculator
 
+[![Build Status](https://github.com/rafinder1/temperature_calculator/actions/workflows/main.yaml/badge.svg)](https://github.com/rafinder1/temperature_calculator/actions/workflows/main.yaml) 
+
 The Temperature Calculator project has been developed as part of a master's thesis in sustainable construction at the Military University of Technology in Warsaw.
 
 ## Project Description
